@@ -1,0 +1,14 @@
+[project]
+name = "crop-person"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+crop-person = "crop_person:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
