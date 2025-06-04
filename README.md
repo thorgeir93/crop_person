@@ -6,6 +6,9 @@ This project was created to make photography post-processing faster and easier. 
 ## About
 This repository helps create clean data for training a model. It focuses on cropping the person from an image so the main part of the image can be used for training. You can also split the cropped person into two parts—upper body and lower body (legs and feet)—to improve training results.
 
+## Note
+This project have been develop with images containing running people so it is quite easy to identify people in those images.
+
 ## Installation
 
 Install [`justfile`](https://github.com/casey/just)
@@ -21,12 +24,12 @@ Then use the `just` command recently installed:
 just run-workflow --help
 ```
 
-## How to Run the Workflow
+## How to Run the Workflow with explaination
 
 ### Simple Workflow
 Run the following command:
 ```justfile
-just run /path/to/media/images /path/to/media
+just run-workflow /path/to/media/images /path/to/store/cropped_persons
 ```
 
 This command will create a `/path/to/media/final` directory containing cropped persons from the `/path/to/media/images`. The workflow includes these steps:
