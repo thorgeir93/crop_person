@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Callable
+import numpy as np
 import typer
 import cv2
 
@@ -75,3 +76,39 @@ def save_images(
         log.debug("Saved image", path=str(output_path), metadata=meta)
 
     log.info("Finished saving images", total_saved=len(images))
+
+
+def split_upper_lower_image(img: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Split a single image into upper and lower halves.
+    """
+    height = img.shape[0]
+    upper = img[0 : height // 2, :, :]
+    lower = img[height // 2 :, :, :]
+    return upper, lower
+
+
+def split_upper_lower(images: list) -> tuple[list, list]:
+    """
+    Given list of (image_path, img, *meta),
+    Returns (upper_images, lower_images), both lists in same format.
+    """
+    upper_images = []
+    lower_images = []
+
+    for image in images:
+        image_path, img, *meta = image
+
+        upper, lower = split_upper_lower_image(img)
+
+        upper_images.append((image_path, upper, *meta))
+        lower_images.append((image_path, lower, *meta))
+
+        log.debug(
+            "Split image",
+            path=str(image_path),
+            upper_shape=upper.shape,
+            lower_shape=lower.shape,
+        )
+
+    return upper_images, lower_images

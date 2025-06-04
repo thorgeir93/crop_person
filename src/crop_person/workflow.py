@@ -4,7 +4,12 @@ from ultralytics import YOLO
 from crop_person.processes.crop import get_cropped_persons_from_directory
 from crop_person.processes.face import filter_images_with_faces
 from crop_person.processes.blur import filter_sharp_images_from_images
-from crop_person.utils import save_images, validate_input_dir, validate_output_dir
+from crop_person.utils import (
+    save_images,
+    split_upper_lower,
+    validate_input_dir,
+    validate_output_dir,
+)
 from crop_person.logging_utils import get_logger
 
 log = get_logger()
@@ -64,15 +69,28 @@ def run_workflow(
     log.info("STEP 3: Filter images with faces")
     images_with_faces = filter_images_with_faces(sharp_images)
 
+    log.info("STEP 4: Split images into upper and lower body")
+    upper_images, lower_images = split_upper_lower(images_with_faces)
+
     # Save final images if requested
     if save:
-        log.info("Saving final images with faces")
+        log.info("Saving final images (upper body)")
+        upper_body_dir = final_dir / "upper"
+        upper_body_dir.mkdir(parents=True, exist_ok=True)
         save_images(
-            images_with_faces,
-            final_dir,
+            upper_images,
+            upper_body_dir,
             name_func=lambda image_path, img, meta: f"{image_path.name}",
         )
-        log.info("Final images saved", output_dir=str(final_dir))
+
+        log.info("Saving final images (lower body)")
+        lower_body_dir = final_dir / "lower"
+        lower_body_dir.mkdir(parents=True, exist_ok=True)
+        save_images(
+            lower_images,
+            lower_body_dir,
+            name_func=lambda image_path, img, meta: f"{image_path.name}",
+        )
 
     # TODO: think about saving as well, we do not need to clean if we do not save I guess.
     # Optional cleanup
